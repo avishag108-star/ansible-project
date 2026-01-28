@@ -1,0 +1,12 @@
+plugin: amazon.aws.aws_ec2
+regions:
+  - us-east-1  # ודאי שזה האזור שבו יצרת את השרתים (למשל eu-central-1 וכו')
+filters:
+  instance-state-name: running
+  tag:Owner: Avishag  # יביא רק שרתים עם התגית שלך
+keyed_groups:
+  - key: tags.Service
+    prefix: service
+compose:
+  ansible_host: public_ip_address
+  ansible_user: ubuntu
