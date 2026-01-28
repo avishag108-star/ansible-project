@@ -16,19 +16,19 @@
       Saturday: 6
 
   tasks:
-    # --- תיקון לבעיה 1: כיבוי שירותים ישנים שתופסים פורטים ---
+
     - name: Stop conflicting system services (from previous exercise)
       service:
         name: "{{ item }}"
         state: stopped
         enabled: no
-      ignore_errors: yes # מתעלם משגיאות אם השירות לא קיים בכלל
+      ignore_errors: yes 
       loop:
         - mysql
         - nginx
         - apache2
 
-    # --- המשך ההתקנה הרגילה ---
+ 
     - name: Install Docker and Python dependencies
       apt:
         pkg:
@@ -48,11 +48,10 @@
         name: "{{ tags.Name }}"
       when: tags.Name is defined
 
-    # --- תיקון לבעיה 2: טיפול חכם יותר בגרסאות ---
     - name: Run Service Container
       community.docker.docker_container:
         name: "{{ tags.Service }}"
-        # התיקון: אם הגרסה לא קיימת או ריקה, שים 'latest'
+      
         image: "{{ tags.Service }}:{{ (tags.Version | default('') | length > 0) | ternary(tags.Version, 'latest') }}"
         state: started
         restart_policy: always
@@ -72,4 +71,5 @@
         weekday: "{{ days_map[tags.Restart.split(' ')[0]] }}"
         job: "/sbin/shutdown -r now"
       when: tags.Restart is defined
+
 
